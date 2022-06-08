@@ -1,0 +1,29 @@
+name: Mayhem for API
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Start API
+      run: |
+        make -j$(nproc)
+        ./out/minikube start
+        kubectl proxy --port=4040&
+        for i in {1..90} ; do curl --silent http://localhost:4040/openapi/v2 && echo API up && break; sleep 5s; done
+
+    - name: Run Mayhem for API to check for vulnerabilities
+      uses: ForAllSecure/mapi-action@v1
+      with:
+        mapi-token: ${{secrets.MAPI_TOKEN}}
+        api-url: http://localhost:4040/
+        api-spec: http://localhost:4040/openapi/v2
+        target: minikube
+        duration: 600sec
+         # kubectl proxy is doing the auth bypass
+        run-args: |
+          --ignore-rule=AuthenticationBypass
