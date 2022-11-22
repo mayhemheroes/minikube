@@ -8,6 +8,9 @@ jobs:
     steps:
 
     - uses: actions/checkout@v2
+      with:
+        # fetch a greater number of commits for computing diffs between jobs
+        fetch-depth: 50
 
     - name: Start API
       run: |
