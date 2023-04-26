@@ -22,7 +22,8 @@ jobs:
     - name: Run Mayhem for API to check for vulnerabilities
       uses: ForAllSecure/mapi-action@v1
       with:
-        mapi-token: ${{secrets.MAPI_TOKEN}}
+        mapi-token: ${{secrets.PLATFORM_TOKEN}}
+        mapi-url: https://beta.mayhem.security
         api-url: http://localhost:4040/
         api-spec: http://localhost:4040/openapi/v2
         target: minikube
